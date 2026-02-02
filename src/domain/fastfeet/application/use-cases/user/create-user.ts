@@ -1,0 +1,41 @@
+import { Either, left, right } from '@/core/either'
+import { IUsersRepository } from '../../repositories/users-repository'
+import { User, UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
+import { Injectable } from '@nestjs/common'
+import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
+import { ConflictError } from '@/core/errors/use-case-errors/conflict-error'
+
+export interface ICreateUserDTO {
+  name: string
+  cpf: string
+  password: string
+}
+
+type CreateUserResponseUseCase = Either<
+  NotAllowedError | ConflictError,
+  {
+    user: User
+  }
+>
+
+@Injectable()
+export class CreateUserUseCase {
+  constructor(private usersRepository: IUsersRepository) {}
+
+  async execute(data: ICreateUserDTO): Promise<CreateUserResponseUseCase> {
+    const userAlreadyExists = await this.usersRepository.findByCpf(data.cpf)
+    if (userAlreadyExists) {
+      return left(new ConflictError('This CPF is already in use'))
+    }
+
+    const isValidCpf = true // TODO: validação de CPF
+    if (!isValidCpf) {
+      return left(new NotAllowedError('Invalid CPF format'))
+    }
+
+    const user = User.create({ ...data, role: UserRoleEnum.DELIVERYMAN })
+
+    await this.usersRepository.create(user)
+    return right({ user })
+  }
+}
