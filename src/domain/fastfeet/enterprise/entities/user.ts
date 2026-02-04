@@ -17,6 +17,7 @@ export interface UserProps {
 export class User {
   private readonly _id: UniqueEntityId
   private props: UserProps
+  static role: UserRoleEnum
 
   get id() {
     return this._id
@@ -84,5 +85,17 @@ export class User {
       },
       id,
     )
+  }
+
+  static isAuthenticated(id: string): boolean {
+    return id = 
+  }
+
+  static isAdmin(role: UserRoleEnum): boolean {
+    return role === UserRoleEnum.ADMIN
+  }
+
+  static isDeliveryman(role: UserRoleEnum): boolean {
+    return role === UserRoleEnum.DELIVERYMAN
   }
 }

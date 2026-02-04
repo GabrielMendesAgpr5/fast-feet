@@ -7,6 +7,17 @@ import { User } from '@/domain/fastfeet/enterprise/entities/user'
 @Injectable()
 export class PrismaUsersRepository implements IUsersRepository {
   constructor(private prisma: PrismaService) {}
+  async findById(userId: string): Promise<User | null> {
+    const prismaUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    })
+
+    if (!prismaUser) {
+      return null
+    }
+
+    return PrismaUsersMapper.toDomain(prismaUser)
+  }
 
   async create(user: User): Promise<User> {
     const prismaUser = PrismaUsersMapper.toPrisma(user)

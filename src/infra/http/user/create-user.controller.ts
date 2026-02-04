@@ -10,13 +10,13 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { CreateUserDTO, validateCreateUserDTO } from './dto/CreateUserDTO'
-import { CreateUserUseCase } from '@/domain/fastfeet/application/use-cases/user/create-user'
+import { CreateUserUseCase } from '@/domain/fastfeet/application/use-cases/user/create-user-usecase'
 import { ConflictError } from '@/core/errors/use-case-errors/conflict-error'
 import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 
 @ApiBearerAuth()
 @ApiTags('user')
-@Controller('user')
+@Controller('/users')
 export class CreateUserController {
   constructor(private readonly createUserUseCase: CreateUserUseCase) {}
 
