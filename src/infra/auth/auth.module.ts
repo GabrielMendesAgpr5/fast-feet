@@ -6,10 +6,13 @@ import { EnvService } from '../env/env.service'
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 import { JwtStrategy } from './jwt.strategy'
+import { DataBaseModule } from '../database/database.module'
 
 @Module({
   imports: [
     PassportModule,
+    EnvModule,
+    DataBaseModule,
     JwtModule.registerAsync({
       imports: [EnvModule],
       inject: [EnvService],

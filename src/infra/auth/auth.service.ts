@@ -22,10 +22,10 @@ export class AuthService {
       throw new ConflictException('Invalid password')
     }
 
-    const payload = { sub: user.id, role: user.role }
+    const payload = { sub: user.id.toString(), role: user.role }
     return {
       access_token: this.jwtService.sign(payload),
-      user: { id: user.id, name: user.name, role: user.role },
+      user: { id: user.id.toString(), name: user.name, role: user.role },
     }
   }
 }

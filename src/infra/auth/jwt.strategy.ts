@@ -6,7 +6,7 @@ import { EnvService } from '../env/env.service'
 import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 
 const tokenPayloadSchema = z.object({
-  sub: z.string().uuid(),
+  sub: z.string(),
   role: z.nativeEnum(UserRoleEnum),
 })
 
