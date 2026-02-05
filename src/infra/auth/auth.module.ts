@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
-import { AuthService } from './auth.service'
 import { EnvModule } from '../env/env.module'
 import { EnvService } from '../env/env.service'
+import { AuthController } from './auth.controller'
+import { AuthService } from './auth.service'
 import { JwtStrategy } from './jwt.strategy'
 
 @Module({
@@ -14,12 +15,13 @@ import { JwtStrategy } from './jwt.strategy'
       inject: [EnvService],
       global: true,
       useFactory: (env: EnvService) => ({
-        signOptions: { algorithm: 'HS256' },
-        privateKey: Buffer.from(env.get('JWT_SECRET_KEY'), 'base64'),
+        signOptions: { algorithm: 'RS256' },
+        privateKey: Buffer.from(env.get('JWT_PRIVATE_KEY'), 'base64'),
         publicKey: Buffer.from(env.get('JWT_PUBLIC_KEY'), 'base64'),
       }),
     }),
   ],
+  controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
   exports: [AuthService],
 })

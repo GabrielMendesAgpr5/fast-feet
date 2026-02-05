@@ -87,10 +87,6 @@ export class User {
     )
   }
 
-  static isAuthenticated(id: string): boolean {
-    return id = 
-  }
-
   static isAdmin(role: UserRoleEnum): boolean {
     return role === UserRoleEnum.ADMIN
   }

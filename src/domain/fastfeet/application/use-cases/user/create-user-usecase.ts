@@ -4,7 +4,7 @@ import { User, UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 import { Injectable } from '@nestjs/common'
 import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { ConflictError } from '@/core/errors/use-case-errors/conflict-error'
-import bcrypt from 'node_modules/bcryptjs'
+import bcrypt from 'bcryptjs'
 
 export interface ICreateUserDTO {
   name: string
