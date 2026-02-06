@@ -1,5 +1,5 @@
-enum OrderStatusEnum {
-  PENDING = 'PENDING',
+export enum OrderStatusEnum {
+  WAITING = 'WAITING',
   WITHDRAWN = 'WITHDRAWN',
   DELIVERED = 'DELIVERED',
   RETURNED = 'RETURNED',
@@ -39,7 +39,6 @@ export class Order {
 
   set product(product: string) {
     this.props.product = product
-    this.touch()
   }
 
   public get status() {
@@ -121,19 +120,19 @@ export class Order {
     this.props.updatedAt = new Date()
   }
 
-  static create(
-    props: Omit<OrderProps, 'createdAt' | 'updatedAt'>,
-    id?: string,
-  ) {
+  static reconstitute(props: OrderProps) {
+    return new Order(props)
+  }
+
+  static create(props: Omit<OrderProps, 'createdAt' | 'updatedAt'>) {
     const now = new Date()
-    const order = new Order(
-      {
-        ...props,
-        createdAt: now,
-        updatedAt: now,
-      },
-      id,
-    )
+    const order = new Order({
+      ...props,
+      id: crypto.randomUUID(),
+      availableAt: now,
+      createdAt: now,
+      updatedAt: now,
+    })
 
     return order
   }

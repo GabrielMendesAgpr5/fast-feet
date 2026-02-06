@@ -3,6 +3,9 @@ import { CreateUserUseCase } from '@/domain/fastfeet/application/use-cases/user/
 import { IUsersRepository } from '@/domain/fastfeet/application/repositories/users-repository'
 import { PrismaUsersRepository } from './prisma/repository/prisma-users-repository'
 import { PrismaService } from './prisma/prisma.service'
+import { IOrdersRepository } from '@/domain/fastfeet/application/repositories/orders-repository'
+import { PrismaOrdersRepository } from './prisma/repository/prisma-orders-repository'
+import { CreateOrderUseCase } from '@/domain/fastfeet/application/use-cases/order/create-order-usecase'
 
 @Module({
   providers: [
@@ -11,8 +14,13 @@ import { PrismaService } from './prisma/prisma.service'
       provide: IUsersRepository,
       useClass: PrismaUsersRepository,
     },
+    {
+      provide: IOrdersRepository,
+      useClass: PrismaOrdersRepository,
+    },
     CreateUserUseCase,
+    CreateOrderUseCase,
   ],
-  exports: [IUsersRepository],
+  exports: [IUsersRepository, IOrdersRepository],
 })
 export class DataBaseModule {}

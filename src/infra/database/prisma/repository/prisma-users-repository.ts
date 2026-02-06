@@ -7,6 +7,7 @@ import { User } from '@/domain/fastfeet/enterprise/entities/user'
 @Injectable()
 export class PrismaUsersRepository implements IUsersRepository {
   constructor(private prisma: PrismaService) {}
+
   async findById(userId: string): Promise<User | null> {
     const prismaUser = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -30,11 +31,11 @@ export class PrismaUsersRepository implements IUsersRepository {
   }
 
   async update(user: User): Promise<User> {
-    const prismaUser = PrismaUsersMapper.toPrisma(user)
+    const dataToUpdate = PrismaUsersMapper.toPrismaUpdate(user)
 
     const updated = await this.prisma.user.update({
-      where: { id: prismaUser.id },
-      data: prismaUser,
+      where: { id: user.id.toString() },
+      data: dataToUpdate,
     })
 
     return PrismaUsersMapper.toDomain(updated)

@@ -1,4 +1,5 @@
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
+import { ApiProperty } from '@nestjs/swagger'
 import z from 'zod'
 
 const authLoginSchema = z.object({
@@ -9,6 +10,8 @@ const authLoginSchema = z.object({
 export const validateAuthLoginDTO = new ZodValidationPipe(authLoginSchema)
 
 export class AuthLoginDTO {
+  @ApiProperty()
   cpf!: string
+  @ApiProperty()
   password!: string
 }

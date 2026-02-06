@@ -17,7 +17,6 @@ export interface UserProps {
 export class User {
   private readonly _id: UniqueEntityId
   private props: UserProps
-  static role: UserRoleEnum
 
   get id() {
     return this._id
@@ -72,6 +71,7 @@ export class User {
     this.props = props
   }
 
+  // Método para CRIAR novos usuários
   static create(
     props: Omit<UserProps, 'createdAt' | 'updatedAt'>,
     id?: UniqueEntityId,
@@ -85,6 +85,10 @@ export class User {
       },
       id,
     )
+  }
+
+  static reconstitute(props: UserProps, id: UniqueEntityId) {
+    return new User(props, id)
   }
 
   static isAdmin(role: UserRoleEnum): boolean {

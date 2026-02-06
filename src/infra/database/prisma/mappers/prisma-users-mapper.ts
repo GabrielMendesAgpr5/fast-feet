@@ -1,27 +1,40 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { User as PrismaUser } from '@prisma/client'
 import { User, UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
-import { Prisma, User as PrismaUser } from '@prisma/client'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 export class PrismaUsersMapper {
-  static toDomain(raw: PrismaUser): User {
-    return User.create(
+  static toDomain(prismaUser: PrismaUser): User {
+    return User.reconstitute(
       {
-        name: raw.name,
-        cpf: raw.cpf,
-        password: raw.password,
-        role: raw.role as UserRoleEnum,
+        name: prismaUser.name,
+        cpf: prismaUser.cpf,
+        password: prismaUser.password,
+        role: prismaUser.role as UserRoleEnum,
+        createdAt: prismaUser.createdAt,
+        updatedAt: prismaUser.updatedAt ?? undefined,
       },
-      new UniqueEntityId(raw.id),
+      new UniqueEntityId(prismaUser.id),
     )
   }
 
-  static toPrisma(user: User): Prisma.UserCreateInput {
+  static toPrisma(user: User) {
     return {
       id: user.id.toString(),
       name: user.name,
       cpf: user.cpf,
       password: user.password,
+      role: user.role,
       createdAt: user.createdAt,
+      updatedAt: user.updatedAt ?? new Date(),
+    }
+  }
+
+  static toPrismaUpdate(user: User) {
+    return {
+      name: user.name,
+      cpf: user.cpf,
+      password: user.password,
+      role: user.role,
     }
   }
 }
