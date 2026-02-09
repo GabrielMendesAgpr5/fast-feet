@@ -1,12 +1,29 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import { IOrdersRepository } from '@/domain/fastfeet/application/repositories/orders-repository'
-import { Order } from '@/domain/fastfeet/enterprise/entities/order'
+import {
+  Order,
+  OrderStatusEnum,
+} from '@/domain/fastfeet/enterprise/entities/order'
 import { PrismaOrdersMapper } from '../mappers/prisma-orders-mapper'
 
 @Injectable()
 export class PrismaOrdersRepository implements IOrdersRepository {
   constructor(private prisma: PrismaService) {}
+  async findByDeliverymanId(
+    deliverymanId: string,
+    status: OrderStatusEnum,
+  ): Promise<Order | null> {
+    const prismaOrders = await this.prisma.order.findMany({
+      where: { deliverymanId: deliverymanId, status: status },
+    })
+    if (!prismaOrders) {
+      return null
+    }
+
+    return PrismaOrdersMapper.toDomain(prismaOrders)
+  }
+
   async findById(orderId: string): Promise<Order | null> {
     const prismaOrder = await this.prisma.order.findUnique({
       where: { id: orderId },
@@ -37,16 +54,5 @@ export class PrismaOrdersRepository implements IOrdersRepository {
     })
 
     return PrismaOrdersMapper.toDomain(updated)
-  }
-
-  async findByDeliveryman(deliverymanId: string): Promise<Order | null> {
-    const prismaOrder = await this.prisma.order.findUnique({
-      where: { id: deliverymanId },
-    })
-    if (!prismaOrder) {
-      return null
-    }
-
-    return PrismaOrdersMapper.toDomain(prismaOrder)
   }
 }

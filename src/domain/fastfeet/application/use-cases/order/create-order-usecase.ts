@@ -1,7 +1,6 @@
 import { Either, left, right } from '@/core/either'
 import { IOrdersRepository } from '../../repositories/orders-repository'
 import { Injectable } from '@nestjs/common'
-import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { ConflictError } from '@/core/errors/use-case-errors/conflict-error'
 import {
   Order,
@@ -15,7 +14,7 @@ export interface ICreateOrderDTO {
 }
 
 type CreateOrderResponseUseCase = Either<
-  NotAllowedError | ConflictError,
+  ConflictError,
   {
     order: Order
   }
