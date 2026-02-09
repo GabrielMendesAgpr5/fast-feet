@@ -8,16 +8,16 @@ import {
   OrderStatusEnum,
 } from '@/domain/fastfeet/enterprise/entities/order'
 import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
+import { ResourceNotFoundError } from '@/core/errors/use-case-errors/resource-not-found-error'
 
 export interface IUpdateOrderDTO {
   id: string
   status: OrderStatusEnum
-  deliveryman: string
-  recipientId: string
+  deliverymanId: string
 }
 
 type UpdateOrderResponseUseCase = Either<
-  NotAllowedError | ConflictError,
+  NotAllowedError | ConflictError | ResourceNotFoundError,
   {
     order: Order
   }
@@ -31,14 +31,26 @@ export class UpdateOrderUseCase {
     const order = await this.orderRepository.findById(data.id)
     if (!order) return left(new NotFoundError('Order not found'))
 
-    if (data.deliveryman !== undefined) order.deliveryman = data.deliveryman
-    if (data.role !== undefined) user.role = data.role
-    if (data.password !== undefined) {
-      const hashedPassword = await bcrypt.hash(data.password, 12)
-      user.password = hashedPassword
+    if (data.deliverymanId !== undefined) {
+      order.deliverymanId = data.deliverymanId
+      order.status = OrderStatusEnum.WITHDRAWN
+      //envia notificação
     }
 
-    await this.userRepository.update(user)
-    return right({ user })
+    if (data.status !== undefined) {
+      if (data.status == OrderStatusEnum.DELIVERED)
+        order.status = OrderStatusEnum.DELIVERED
+      //envia notificação
+      else if (data.status == OrderStatusEnum.RETURNED)
+        order.status = OrderStatusEnum.RETURNED
+      //envia notificação
+      else
+        return left(
+          new ResourceNotFoundError(`Status: "${data.status}", not Found`),
+        )
+    }
+
+    await this.orderRepository.update(order)
+    return right({ order })
   }
 }
