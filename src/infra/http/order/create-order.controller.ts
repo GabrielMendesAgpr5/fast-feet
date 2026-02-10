@@ -15,7 +15,7 @@ import { ConflictError } from '@/core/errors/use-case-errors/conflict-error'
 import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 import { Roles } from '@/infra/auth/roles-decorator'
-import { JwtAuthGuard } from '@/infra/auth/jwt-auth-guard'
+import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { RolesGuard } from '@/infra/auth/roles.guard'
 import { CreateOrderDTO, validateCreateOrderDTO } from './dto/CreateOrderDTO'
 

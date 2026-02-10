@@ -15,7 +15,7 @@ import { UpdateUserUseCase } from '@/domain/fastfeet/application/use-cases/user/
 import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 import { Roles } from '@/infra/auth/roles-decorator'
-import { JwtAuthGuard } from '@/infra/auth/jwt-auth-guard'
+import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { RolesGuard } from '@/infra/auth/roles.guard'
 import { UpdateUserDTO, validateUpdateUserDTO } from './dto/UpdateUserDTO'
 import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'

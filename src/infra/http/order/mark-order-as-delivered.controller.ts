@@ -12,32 +12,31 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { RolesGuard } from '@/infra/auth/roles.guard'
-import { AssignDeliverymanToOrderUseCase } from '@/domain/fastfeet/application/use-cases/order/assign-deliveryman-to-order-usecase'
+import { MarkOrderAsDeliveredUseCase } from '@/domain/fastfeet/application/use-cases/order/mark-order-as-delivered-usecase'
 import {
-  AssignDeliverymanToOrderDTO,
-  validateAssignDeliverymanToOrderDTO,
-} from './dto/AssignDeliverymanToOrderDTO'
+  MarkOrderAsDeliveredDTO,
+  validateMarkOrderAsDeliveredDTO,
+} from './dto/MarkOrderAsDeliveredDTO'
 
 @ApiBearerAuth('bearer')
 @ApiTags('order')
 @Controller('/order/')
-export class AssignDeliverymanToOrderController {
+export class MarkOrderAsDeliveredController {
   constructor(
-    private readonly assignDeliverymanToOrderUseCase: AssignDeliverymanToOrderUseCase,
+    private readonly markOrderAsDeliveredUseCase: MarkOrderAsDeliveredUseCase,
   ) {}
 
   @Patch()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: 'Assign deliveryman to order' })
+  @ApiOperation({ summary: 'Mark order as delivered' })
   @HttpCode(HttpStatus.PARTIAL_CONTENT)
   async handle(
-    @Body(validateAssignDeliverymanToOrderDTO) dto: AssignDeliverymanToOrderDTO,
+    @Body(validateMarkOrderAsDeliveredDTO) dto: MarkOrderAsDeliveredDTO,
   ) {
-    const { orderId, deliverymanId } = dto
+    const { orderId } = dto
 
-    const result = await this.assignDeliverymanToOrderUseCase.execute({
+    const result = await this.markOrderAsDeliveredUseCase.execute({
       orderId,
-      deliverymanId,
     })
 
     if (result.isLeft()) {
