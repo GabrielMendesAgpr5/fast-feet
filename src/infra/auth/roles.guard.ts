@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core'
 import type { Request } from 'express'
 import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
-import { ROLES_KEY } from './roles-decorator'
+import { ROLES_KEY } from './roles.decorator'
 
 type RequestUser = {
   sub: string

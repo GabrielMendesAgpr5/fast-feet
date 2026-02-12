@@ -6,26 +6,34 @@ import {
   OrderStatusEnum,
 } from '@/domain/fastfeet/enterprise/entities/order'
 import { PrismaOrdersMapper } from '../mappers/prisma-orders-mapper'
+import { OrderStatus } from 'generated/prisma'
 
 @Injectable()
 export class PrismaOrdersRepository implements IOrdersRepository {
   constructor(private prisma: PrismaService) {}
+  async delete(orderId: string): Promise<void> {
+    await this.prisma.user.delete({
+      where: { id: orderId },
+    })
+  }
   async findByDeliverymanId(
     deliverymanId: string,
-    status: OrderStatusEnum,
-  ): Promise<Order | null> {
+    status?: OrderStatusEnum,
+  ): Promise<Order[]> {
     const prismaOrders = await this.prisma.order.findMany({
-      where: { deliverymanId: deliverymanId, status: status },
+      where: {
+        deliverymanId: deliverymanId,
+        ...(status && { status: status as OrderStatus }),
+      },
     })
-    if (!prismaOrders) {
-      return null
-    }
 
-    return PrismaOrdersMapper.toDomain(prismaOrders)
+    return prismaOrders.map((prismaOrder) =>
+      PrismaOrdersMapper.toDomain(prismaOrder),
+    )
   }
 
   async findById(orderId: string): Promise<Order | null> {
-    const prismaOrder = await this.prisma.order.findUnique({
+    const prismaOrder = await this.prisma.order.findFirst({
       where: { id: orderId },
     })
     if (!prismaOrder) {

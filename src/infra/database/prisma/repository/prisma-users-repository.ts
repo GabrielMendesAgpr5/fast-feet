@@ -7,6 +7,11 @@ import { User } from '@/domain/fastfeet/enterprise/entities/user'
 @Injectable()
 export class PrismaUsersRepository implements IUsersRepository {
   constructor(private prisma: PrismaService) {}
+  async delete(userId: string): Promise<void> {
+    await this.prisma.user.delete({
+      where: { id: userId },
+    })
+  }
 
   async findById(userId: string): Promise<User | null> {
     const prismaUser = await this.prisma.user.findUnique({

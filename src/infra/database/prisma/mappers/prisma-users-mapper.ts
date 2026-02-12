@@ -4,14 +4,14 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 export class PrismaUsersMapper {
   static toDomain(prismaUser: PrismaUser): User {
-    return User.reconstitute(
+    return User.create(
       {
         name: prismaUser.name,
         cpf: prismaUser.cpf,
         password: prismaUser.password,
         role: prismaUser.role as UserRoleEnum,
         createdAt: prismaUser.createdAt,
-        updatedAt: prismaUser.updatedAt ?? undefined,
+        updatedAt: prismaUser.updatedAt,
       },
       new UniqueEntityId(prismaUser.id),
     )
@@ -24,8 +24,8 @@ export class PrismaUsersMapper {
       cpf: user.cpf,
       password: user.password,
       role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt ?? new Date(),
+      createdAt: user.createdAt!,
+      updatedAt: user.updatedAt!,
     }
   }
 
@@ -35,6 +35,7 @@ export class PrismaUsersMapper {
       cpf: user.cpf,
       password: user.password,
       role: user.role,
+      updatedAt: new Date(),
     }
   }
 }

@@ -11,11 +11,11 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { CreateUserDTO, validateCreateUserDTO } from './dto/CreateUserDTO'
-import { CreateUserUseCase } from '@/domain/fastfeet/application/use-cases/user/create-user-usecase'
+import { CreateUserUseCase } from '@/domain/fastfeet/application/use-cases/users/create-user-usecase'
 import { ConflictError } from '@/core/errors/use-case-errors/conflict-error'
 import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
-import { Roles } from '@/infra/auth/roles-decorator'
+import { Roles } from '@/infra/auth/roles.decorator'
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { RolesGuard } from '@/infra/auth/roles.guard'
 

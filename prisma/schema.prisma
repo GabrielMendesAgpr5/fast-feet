@@ -14,6 +14,7 @@ enum UserRole {
 
 enum OrderStatus {
   WAITING
+  PENDING
   WITHDRAWN
   DELIVERED
   RETURNED

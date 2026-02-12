@@ -1,12 +1,15 @@
+import { Entity } from '@/core/entities/entity'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+
 export enum OrderStatusEnum {
   WAITING = 'WAITING',
+  PENDING = 'PENDING',
   WITHDRAWN = 'WITHDRAWN',
   DELIVERED = 'DELIVERED',
   RETURNED = 'RETURNED',
 }
 
 export interface OrderProps {
-  id: string
   product: string
   status: OrderStatusEnum
   availableAt: Date | null
@@ -16,32 +19,21 @@ export interface OrderProps {
   recipientId: string
   deliverymanId: string | null
   signatureId: string | null
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
 }
 
-export class Order {
-  private readonly _id: string
-  private props: OrderProps
-
-  constructor(props: OrderProps, id?: string) {
-    this.props = props
-    this._id = id ?? props.id
-  }
-
-  public get id() {
-    return this._id
-  }
-
-  public get product() {
+export class Order extends Entity<OrderProps> {
+  get product() {
     return this.props.product
   }
 
   set product(product: string) {
     this.props.product = product
+    this.touch()
   }
 
-  public get status() {
+  get status() {
     return this.props.status
   }
 
@@ -50,7 +42,7 @@ export class Order {
     this.touch()
   }
 
-  public get availableAt() {
+  get availableAt() {
     return this.props.availableAt
   }
 
@@ -59,7 +51,7 @@ export class Order {
     this.touch()
   }
 
-  public get withdrawnAt() {
+  get withdrawnAt() {
     return this.props.withdrawnAt
   }
 
@@ -68,7 +60,7 @@ export class Order {
     this.touch()
   }
 
-  public get deliveredAt() {
+  get deliveredAt() {
     return this.props.deliveredAt
   }
 
@@ -77,7 +69,7 @@ export class Order {
     this.touch()
   }
 
-  public get returnedAt() {
+  get returnedAt() {
     return this.props.returnedAt
   }
 
@@ -86,11 +78,11 @@ export class Order {
     this.touch()
   }
 
-  public get recipientId() {
+  get recipientId() {
     return this.props.recipientId
   }
 
-  public get deliverymanId() {
+  get deliverymanId() {
     return this.props.deliverymanId
   }
 
@@ -99,7 +91,7 @@ export class Order {
     this.touch()
   }
 
-  public get signatureId() {
+  get signatureId() {
     return this.props.signatureId
   }
 
@@ -108,11 +100,11 @@ export class Order {
     this.touch()
   }
 
-  public get createdAt() {
+  get createdAt() {
     return this.props.createdAt
   }
 
-  public get updatedAt() {
+  get updatedAt() {
     return this.props.updatedAt
   }
 
@@ -120,19 +112,22 @@ export class Order {
     this.props.updatedAt = new Date()
   }
 
-  static reconstitute(props: OrderProps) {
-    return new Order(props)
-  }
-
-  static create(props: Omit<OrderProps, 'createdAt' | 'updatedAt'>) {
+  static create(
+    props: Omit<OrderProps, 'createdAt' | 'updatedAt'> & {
+      createdAt?: Date
+      updatedAt?: Date
+    },
+    id?: UniqueEntityId,
+  ) {
     const now = new Date()
-    const order = new Order({
-      ...props,
-      id: crypto.randomUUID(),
-      availableAt: now,
-      createdAt: now,
-      updatedAt: now,
-    })
+    const order = new Order(
+      {
+        ...props,
+        createdAt: props.createdAt ?? now,
+        updatedAt: props.updatedAt ?? now,
+      },
+      id,
+    )
 
     return order
   }

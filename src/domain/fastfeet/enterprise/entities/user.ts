@@ -1,3 +1,4 @@
+import { Entity } from '@/core/entities/entity'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 export enum UserRoleEnum {
@@ -10,47 +11,36 @@ export interface UserProps {
   cpf: string
   password: string
   role: UserRoleEnum
-  createdAt: Date
+  createdAt?: Date
   updatedAt?: Date
 }
 
-export class User {
-  private readonly _id: UniqueEntityId
-  private props: UserProps
-
-  get id() {
-    return this._id
-  }
-
+export class User extends Entity<UserProps> {
   get name() {
     return this.props.name
   }
-  set name(value: string) {
-    this.props.name = value
+  set name(name: string) {
+    this.props.name = name
     this.touch()
   }
 
   get cpf() {
     return this.props.cpf
   }
-  set cpf(value: string) {
-    this.props.cpf = value
-    this.touch()
-  }
 
   get password() {
     return this.props.password
   }
-  set password(value: string) {
-    this.props.password = value
+  set password(password: string) {
+    this.props.password = password
     this.touch()
   }
 
   get role() {
     return this.props.role
   }
-  set role(value: UserRoleEnum) {
-    this.props.role = value
+  set role(role: UserRoleEnum) {
+    this.props.role = role
     this.touch()
   }
 
@@ -66,36 +56,29 @@ export class User {
     this.props.updatedAt = new Date()
   }
 
-  private constructor(props: UserProps, id?: UniqueEntityId) {
-    this._id = id ?? new UniqueEntityId()
-    this.props = props
-  }
-
-  // Método para CRIAR novos usuários
   static create(
-    props: Omit<UserProps, 'createdAt' | 'updatedAt'>,
+    props: Omit<UserProps, 'createdAt' | 'updatedAt'> & {
+      createdAt?: Date
+      updatedAt?: Date
+    },
     id?: UniqueEntityId,
   ) {
     const now = new Date()
     return new User(
       {
         ...props,
-        createdAt: now,
-        updatedAt: now,
+        createdAt: props.createdAt ?? now,
+        updatedAt: props.updatedAt ?? now,
       },
       id,
     )
   }
 
-  static reconstitute(props: UserProps, id: UniqueEntityId) {
-    return new User(props, id)
+  isDeliveryman(): boolean {
+    return this.props.role === UserRoleEnum.DELIVERYMAN
   }
 
-  static isAdmin(role: UserRoleEnum): boolean {
-    return role === UserRoleEnum.ADMIN
-  }
-
-  static isDeliveryman(role: UserRoleEnum): boolean {
-    return role === UserRoleEnum.DELIVERYMAN
+  isAdmin(): boolean {
+    return this.props.role === UserRoleEnum.ADMIN
   }
 }

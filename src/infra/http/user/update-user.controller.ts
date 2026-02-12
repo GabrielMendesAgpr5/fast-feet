@@ -11,10 +11,10 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { UpdateUserUseCase } from '@/domain/fastfeet/application/use-cases/user/update-user-usecase'
+import { UpdateUserUseCase } from '@/domain/fastfeet/application/use-cases/users/update-user-usecase'
 import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
-import { Roles } from '@/infra/auth/roles-decorator'
+import { Roles } from '@/infra/auth/roles.decorator'
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { RolesGuard } from '@/infra/auth/roles.guard'
 import { UpdateUserDTO, validateUpdateUserDTO } from './dto/UpdateUserDTO'

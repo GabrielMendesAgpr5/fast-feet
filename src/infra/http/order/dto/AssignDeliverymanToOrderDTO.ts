@@ -3,7 +3,6 @@ import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
 import { z } from 'zod'
 
 const AssignDeliverymanToOrderSchema = z.object({
-  orderId: z.string(),
   deliverymanId: z.string(),
 })
 
@@ -16,8 +15,6 @@ type AssignDeliverymanToOrderDTOType = z.infer<
 >
 
 export class AssignDeliverymanToOrderDTO implements AssignDeliverymanToOrderDTOType {
-  @ApiProperty()
-  orderId!: string
   @ApiProperty()
   deliverymanId!: string
 }

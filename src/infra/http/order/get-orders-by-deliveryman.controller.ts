@@ -1,62 +1,64 @@
 import {
   Controller,
-  Body,
   HttpCode,
   HttpStatus,
-  ForbiddenException,
-  BadRequestException,
+  NotFoundException,
   UseGuards,
-  Patch,
+  Get,
+  Query,
+  ValidationPipe,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { RolesGuard } from '@/infra/auth/roles.guard'
-import {
-  GetOrdersByDeliverymanDTO,
-  validateGetOrdersByDeliverymanDTO,
-} from './dto/GetOrdersByDeliverymanDTO copy'
-import { GetOrdersByDeliverymanUseCase } from '@/domain/fastfeet/application/use-cases/order/get-orders-by-deliveryman-usecase'
+import { Roles } from '@/infra/auth/roles.decorator'
+import type { UserPayload } from '@/infra/auth/jwt.strategy'
+import { CurrentUser } from '@/infra/auth/current-user.decorator'
+import { GetOrdersByDeliverymanUseCase } from '@/domain/fastfeet/application/use-cases/orders/get-orders-by-deliveryman-usecase'
+import { GetOrdersByDeliverymanQueryDTO } from './dto/GetOrderByDeliverymanQueryDTO'
+import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 
 @ApiBearerAuth('bearer')
 @ApiTags('order')
-@Controller('/order')
+@Controller('/orders')
 export class GetOrdersByDeliverymanController {
   constructor(
-    private readonly GetOrdersByDeliverymanUseCase: GetOrdersByDeliverymanUseCase,
+    private readonly getOrdersByDeliverymanUseCase: GetOrdersByDeliverymanUseCase,
   ) {}
 
-  @Patch()
+  @Get('/my-orders')
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.DELIVERYMAN)
   @ApiOperation({ summary: 'Get orders by deliveryman' })
   @HttpCode(HttpStatus.OK)
   async handle(
-    @Body(validateGetOrdersByDeliverymanDTO) dto: GetOrdersByDeliverymanDTO,
+    @CurrentUser() user: UserPayload,
+    @Query(new ValidationPipe({ transform: true }))
+    query: GetOrdersByDeliverymanQueryDTO,
   ) {
-    const { deliverymanId } = dto
-
-    const result = await this.GetOrdersByDeliverymanUseCase.execute({
-      deliverymanId,
+    const result = await this.getOrdersByDeliverymanUseCase.execute({
+      deliverymanId: user.sub,
+      status: query.status,
     })
 
     if (result.isLeft()) {
-      const error: Error = result.value as Error
-      if (error instanceof NotAllowedError)
-        throw new ForbiddenException(error.message)
-      throw new BadRequestException(error.message)
+      throw new NotFoundException(result.value.message)
     }
 
-    const { order } = result.value
+    const { orders } = result.value
+
     return {
-      id: order.id,
-      product: order.product,
-      recipientId: order.recipientId,
-      satatus: order.status,
-      createdAt: order.createdAt,
-      availableAt: order.availableAt,
-      withdrawnAt: order.withdrawnAt,
-      deliveredAt: order.deliveredAt,
-      returnedAt: order.returnedAt,
+      orders: orders.map((order) => ({
+        id: order.id.toString(),
+        product: order.product,
+        recipientId: order.recipientId.toString(),
+        status: order.status,
+        createdAt: order.createdAt,
+        availableAt: order.availableAt,
+        withdrawnAt: order.withdrawnAt,
+        deliveredAt: order.deliveredAt,
+        returnedAt: order.returnedAt,
+      })),
     }
   }
 }

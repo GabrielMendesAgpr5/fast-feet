@@ -1,3 +1,7 @@
+import { Entity } from '@/core/entities/entity'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { Coordinates } from '../value-objects/coordinates'
+
 export interface RecipientProps {
   name: string
   email: string | null
@@ -7,27 +11,16 @@ export interface RecipientProps {
   city: string
   state: string
   zipCode: string
-  latitude: number
-  longitude: number
-  createdAt: Date
-  updatedAt: Date
+  coordinates: Coordinates
+  createdAt?: Date
+  updatedAt?: Date
 }
 
-export class Recipient {
-  private readonly _id: string
-  private props: RecipientProps
-  private constructor(props: RecipientProps, id?: string) {
-    this._id = id ?? crypto.randomUUID()
-    this.props = props
-  }
-
-  get id() {
-    return this._id
-  }
-
+export class Recipient extends Entity<RecipientProps> {
   get name() {
     return this.props.name
   }
+
   set name(value: string) {
     this.props.name = value
     this.touch()
@@ -36,6 +29,7 @@ export class Recipient {
   get email() {
     return this.props.email
   }
+
   set email(value: string | null) {
     this.props.email = value
     this.touch()
@@ -44,6 +38,7 @@ export class Recipient {
   get street() {
     return this.props.street
   }
+
   set street(value: string) {
     this.props.street = value
     this.touch()
@@ -94,22 +89,21 @@ export class Recipient {
     this.touch()
   }
 
-  get latitude() {
-    return this.props.latitude
+  get coordinates() {
+    return this.props.coordinates
   }
 
-  set latitude(value: number) {
-    this.props.latitude = value
+  set coordinates(value: Coordinates) {
+    this.props.coordinates = value
     this.touch()
+  }
+
+  get latitude() {
+    return this.props.coordinates.latitude
   }
 
   get longitude() {
-    return this.props.longitude
-  }
-
-  set longitude(value: number) {
-    this.props.longitude = value
-    this.touch()
+    return this.props.coordinates.longitude
   }
 
   get createdAt() {
@@ -124,16 +118,24 @@ export class Recipient {
     this.props.updatedAt = new Date()
   }
 
+  updateCoordinates(latitude: number, longitude: number): void {
+    this.props.coordinates = Coordinates.create(latitude, longitude)
+    this.touch()
+  }
+
   static create(
-    props: Omit<RecipientProps, 'createdAt' | 'updatedAt'>,
-    id?: string,
+    props: Omit<RecipientProps, 'createdAt' | 'updatedAt'> & {
+      createdAt?: Date
+      updatedAt?: Date
+    },
+    id?: UniqueEntityId,
   ) {
     const now = new Date()
     return new Recipient(
       {
         ...props,
-        createdAt: now,
-        updatedAt: now,
+        createdAt: props.createdAt ?? now,
+        updatedAt: props.updatedAt ?? now,
       },
       id,
     )

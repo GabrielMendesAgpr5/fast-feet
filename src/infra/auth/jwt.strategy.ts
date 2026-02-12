@@ -7,7 +7,7 @@ import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 
 const tokenPayloadSchema = z.object({
   sub: z.string(),
-  role: z.nativeEnum(UserRoleEnum),
+  role: z.enum(UserRoleEnum),
 })
 
 export type UserPayload = z.infer<typeof tokenPayloadSchema>
