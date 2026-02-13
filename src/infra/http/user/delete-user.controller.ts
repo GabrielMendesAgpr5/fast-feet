@@ -7,6 +7,7 @@ import {
   UseGuards,
   Delete,
   Param,
+  NotFoundException,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { DeleteUserUseCase } from '@/domain/fastfeet/application/use-cases/users/delete-user-usecase'
@@ -33,7 +34,8 @@ export class DeleteUserController {
 
     if (result.isLeft()) {
       const error: Error = result.value as Error
-      if (error instanceof NotFoundError) throw new NotFoundError(error.message)
+      if (error instanceof NotFoundError)
+        throw new NotFoundException(error.message)
       if (error instanceof NotAllowedError)
         throw new ForbiddenException(error.message)
       throw new BadRequestException(error.message)

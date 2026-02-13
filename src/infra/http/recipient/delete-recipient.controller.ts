@@ -2,20 +2,21 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
-  ForbiddenException,
   BadRequestException,
   UseGuards,
   Delete,
   Param,
+  ConflictException,
+  NotFoundException,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 import { Roles } from '@/infra/auth/roles.decorator'
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { RolesGuard } from '@/infra/auth/roles.guard'
-import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
 import { DeleteRecipientUseCase } from '@/domain/fastfeet/application/use-cases/recipients/delete-recipient-usecase'
+import { ConflictError } from '@/core/errors/use-case-errors/conflict-error'
+import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
 
 @ApiBearerAuth('bearer')
 @ApiTags('recipient')
@@ -37,9 +38,10 @@ export class DeleteRecipientController {
 
     if (result.isLeft()) {
       const error: Error = result.value as Error
-      if (error instanceof NotFoundError) throw new NotFoundError(error.message)
-      if (error instanceof NotAllowedError)
-        throw new ForbiddenException(error.message)
+      if (error instanceof ConflictError)
+        throw new ConflictException(error.message)
+      if (error instanceof NotFoundError)
+        throw new NotFoundException(error.message)
       throw new BadRequestException(error.message)
     }
   }

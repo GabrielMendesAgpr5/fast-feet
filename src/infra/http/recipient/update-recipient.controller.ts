@@ -11,7 +11,6 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { UpdateUserUseCase } from '@/domain/fastfeet/application/use-cases/users/update-user-usecase'
 import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 import { Roles } from '@/infra/auth/roles.decorator'
@@ -22,12 +21,15 @@ import {
   UpdateRecipientDTO,
   validateUpdateRecipientDTO,
 } from './DTO/UpdateRecipientDTO'
+import { UpdateRecipientUseCase } from '@/domain/fastfeet/application/use-cases/recipients/update-recipient-usecase'
 
 @ApiBearerAuth('bearer')
 @ApiTags('recipient')
 @Controller('/recipient')
-export class UpdateUserController {
-  constructor(private readonly updateUserUseCase: UpdateUserUseCase) {}
+export class UpdateRecipientController {
+  constructor(
+    private readonly updateRecipientUseCase: UpdateRecipientUseCase,
+  ) {}
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -39,7 +41,7 @@ export class UpdateUserController {
     @Param('id') id: string,
     @Body(validateUpdateRecipientDTO) dto: UpdateRecipientDTO,
   ) {
-    const result = await this.updateUserUseCase.execute({ id, ...dto })
+    const result = await this.updateRecipientUseCase.execute({ id, ...dto })
 
     if (result.isLeft()) {
       const error: Error = result.value as Error

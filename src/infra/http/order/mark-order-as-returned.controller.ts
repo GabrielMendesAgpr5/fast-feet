@@ -28,8 +28,8 @@ export class MarkOrderAsReturnedController {
 
   @Patch(':orderId/return')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.DELIVERYMAN)
-  @ApiOperation({ summary: 'Mark order as returned (Deliverer Only)' })
+  @Roles(UserRoleEnum.ADMIN)
+  @ApiOperation({ summary: 'Mark order as returned (Admin Only)' })
   @HttpCode(HttpStatus.OK)
   async handle(
     @Param('orderId') orderId: string,

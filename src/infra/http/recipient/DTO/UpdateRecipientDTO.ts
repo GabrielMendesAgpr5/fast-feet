@@ -44,5 +44,5 @@ export class UpdateRecipientDTO implements UpdateRecipientDTOType {
   @ApiPropertyOptional()
   street?: string
   @ApiPropertyOptional()
-  zipcode?: string
+  zipCode?: string
 }

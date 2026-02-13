@@ -31,7 +31,7 @@ export class DeleteRecipientUseCase {
       data.Id,
     )
     if (usingOnOrderRecipient)
-      return left(new ConflictError('Recipient on Order'))
+      return left(new ConflictError('Recipient linked to an Order'))
 
     await this.recipientsRepository.delete(recipient.id.toString())
 
