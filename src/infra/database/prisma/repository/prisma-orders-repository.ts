@@ -11,6 +11,19 @@ import { OrderStatus } from 'generated/prisma'
 @Injectable()
 export class PrismaOrdersRepository implements IOrdersRepository {
   constructor(private prisma: PrismaService) {}
+  async findByRecipient(recipientId: string): Promise<Order | null> {
+    const prismaOrder = await this.prisma.order.findFirst({
+      where: {
+        recipientId: recipientId,
+      },
+    })
+
+    if (!prismaOrder) {
+      return null
+    }
+
+    return PrismaOrdersMapper.toDomain(prismaOrder)
+  }
   async delete(orderId: string): Promise<void> {
     await this.prisma.user.delete({
       where: { id: orderId },

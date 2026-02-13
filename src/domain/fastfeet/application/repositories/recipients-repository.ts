@@ -5,6 +5,7 @@ export abstract class IRecipientsRepository {
   abstract update(recipient: Recipient): Promise<Recipient>
   abstract delete(recipientId: string): Promise<void>
   abstract findById(recipientId: string): Promise<Recipient | null>
+  abstract findByEmail(email: string): Promise<Recipient | null>
   abstract listNearbyLocation(
     latitude: number,
     longitude: number,

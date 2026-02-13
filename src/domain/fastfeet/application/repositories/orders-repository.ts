@@ -8,6 +8,7 @@ export abstract class IOrdersRepository {
   abstract update(order: Order): Promise<Order>
   abstract delete(orderId: string): Promise<void>
   abstract findById(orderId: string): Promise<Order | null>
+  abstract findByRecipient(recipientId: string): Promise<Order | null>
   abstract findByDeliverymanId(
     deliverymanId: string,
     status?: OrderStatusEnum,

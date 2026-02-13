@@ -1,47 +1,43 @@
 import {
   Controller,
-  Body,
   HttpCode,
   HttpStatus,
   ForbiddenException,
   BadRequestException,
   UseGuards,
-  Patch,
+  Delete,
   Param,
-  NotFoundException,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { UpdateUserUseCase } from '@/domain/fastfeet/application/use-cases/users/update-user-usecase'
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 import { Roles } from '@/infra/auth/roles.decorator'
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { RolesGuard } from '@/infra/auth/roles.guard'
-import { UpdateUserDTO, validateUpdateUserDTO } from './dto/UpdateUserDTO'
 import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
+import { DeleteRecipientUseCase } from '@/domain/fastfeet/application/use-cases/recipients/delete-recipient-usecase'
 
 @ApiBearerAuth('bearer')
-@ApiTags('user')
-@Controller('/user')
-export class UpdateUserController {
-  constructor(private readonly updateUserUseCase: UpdateUserUseCase) {}
+@ApiTags('recipient')
+@Controller('/recipient')
+export class DeleteRecipientController {
+  constructor(
+    private readonly deleteRecipientUseCase: DeleteRecipientUseCase,
+  ) {}
 
-  @Patch(':id')
+  @Delete(':Id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN)
-  @ApiOperation({ summary: 'Update a user (Admin Only)' })
-  @ApiParam({ name: 'id', type: String })
-  @HttpCode(HttpStatus.OK)
-  async handle(
-    @Param('id') id: string,
-    @Body(validateUpdateUserDTO) dto: UpdateUserDTO,
-  ) {
-    const result = await this.updateUserUseCase.execute({ id, ...dto })
+  @ApiOperation({ summary: 'Delete recipient (Admin Only)' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async handle(@Param('Id') recipientId: string) {
+    const result = await this.deleteRecipientUseCase.execute({
+      Id: recipientId,
+    })
 
     if (result.isLeft()) {
       const error: Error = result.value as Error
-      if (error instanceof NotFoundError)
-        throw new NotFoundException(error.message)
+      if (error instanceof NotFoundError) throw new NotFoundError(error.message)
       if (error instanceof NotAllowedError)
         throw new ForbiddenException(error.message)
       throw new BadRequestException(error.message)

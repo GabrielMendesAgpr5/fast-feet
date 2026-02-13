@@ -29,7 +29,7 @@ export class MarkOrderAsDeliveredController {
   @Patch(':orderId/delivery')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.DELIVERYMAN)
-  @ApiOperation({ summary: 'Mark order as delivered' })
+  @ApiOperation({ summary: 'Mark order as delivered (Deliverer Only)' })
   @HttpCode(HttpStatus.OK)
   async handle(
     @Param('orderId') orderId: string,

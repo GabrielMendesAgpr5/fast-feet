@@ -17,24 +17,27 @@ import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 import { Roles } from '@/infra/auth/roles.decorator'
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { RolesGuard } from '@/infra/auth/roles.guard'
-import { UpdateUserDTO, validateUpdateUserDTO } from './dto/UpdateUserDTO'
 import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
+import {
+  UpdateRecipientDTO,
+  validateUpdateRecipientDTO,
+} from './DTO/UpdateRecipientDTO'
 
 @ApiBearerAuth('bearer')
-@ApiTags('user')
-@Controller('/user')
+@ApiTags('recipient')
+@Controller('/recipient')
 export class UpdateUserController {
   constructor(private readonly updateUserUseCase: UpdateUserUseCase) {}
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN)
-  @ApiOperation({ summary: 'Update a user (Admin Only)' })
+  @ApiOperation({ summary: 'Update a recipient (Admin Only)' })
   @ApiParam({ name: 'id', type: String })
   @HttpCode(HttpStatus.OK)
   async handle(
     @Param('id') id: string,
-    @Body(validateUpdateUserDTO) dto: UpdateUserDTO,
+    @Body(validateUpdateRecipientDTO) dto: UpdateRecipientDTO,
   ) {
     const result = await this.updateUserUseCase.execute({ id, ...dto })
 

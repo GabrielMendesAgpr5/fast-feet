@@ -28,13 +28,12 @@ export class CreateOrderController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN)
-  @ApiOperation({ summary: 'Create a new order' })
+  @ApiOperation({ summary: 'Create a new order (Admin Only)' })
   @HttpCode(HttpStatus.CREATED)
   async handle(@Body(validateCreateOrderDTO) dto: CreateOrderDTO) {
-    const { id, product, recipientId } = dto
+    const { product, recipientId } = dto
 
     const result = await this.createOrderUseCase.execute({
-      id,
       product,
       recipientId,
     })

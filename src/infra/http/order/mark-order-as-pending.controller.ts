@@ -27,7 +27,7 @@ export class MarkOrderAsPendingController {
   @Patch(':orderId/enable')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN)
-  @ApiOperation({ summary: 'Mark order as Pending' })
+  @ApiOperation({ summary: 'Mark order as Pending (Admin Only)' })
   @HttpCode(HttpStatus.OK)
   async handle(@Param('orderId') orderId: string) {
     const result = await this.markOrderAsPendingUseCase.execute({

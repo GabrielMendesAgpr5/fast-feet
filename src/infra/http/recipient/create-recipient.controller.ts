@@ -13,6 +13,7 @@ import { Roles } from '@/infra/auth/roles.decorator'
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { RolesGuard } from '@/infra/auth/roles.guard'
 import { CreateRecipientUseCase } from '@/domain/fastfeet/application/use-cases/recipients/create-recipient-usecase'
+import { GeocodingFailedError } from '@/core/errors/use-case-errors/geocoding-error'
 import {
   CreateRecipientDTO,
   validateCreateRecipientDTO,
@@ -35,10 +36,30 @@ export class CreateRecipientController {
     const result = await this.createRecipientUseCase.execute(body)
 
     if (result.isLeft()) {
-      throw new BadRequestException((result.value as Error).message)
+      const error = result.value
+
+      if (error instanceof GeocodingFailedError) {
+        throw new BadRequestException(error.message)
+      }
+
+      throw new BadRequestException((error as Error).message)
     }
 
     const { recipient } = result.value
-    return { }
+
+    return {
+      id: recipient.id.toString(),
+      name: recipient.name,
+      email: recipient.email,
+      street: recipient.street,
+      number: recipient.number,
+      complement: recipient.complement,
+      city: recipient.city,
+      state: recipient.state,
+      zipCode: recipient.zipCode,
+      latitude: recipient.latitude,
+      longitude: recipient.longitude,
+      createdAt: recipient.createdAt,
+    }
   }
 }

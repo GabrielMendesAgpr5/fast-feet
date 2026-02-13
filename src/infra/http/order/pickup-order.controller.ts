@@ -16,6 +16,8 @@ import { RolesGuard } from '@/infra/auth/roles.guard'
 import { CurrentUser } from '@/infra/auth/current-user.decorator'
 import { AssignDeliverymanToOrderUseCase } from '@/domain/fastfeet/application/use-cases/orders/assign-deliveryman-to-order-usecase'
 import type { UserPayload } from '@/infra/auth/jwt.strategy'
+import { Roles } from '@/infra/auth/roles.decorator'
+import { UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
 
 @ApiBearerAuth('bearer')
 @ApiTags('order')
@@ -27,7 +29,8 @@ export class PickupOrderController {
 
   @Patch(':orderId/pickup')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: 'Pickup order' })
+  @Roles(UserRoleEnum.DELIVERYMAN)
+  @ApiOperation({ summary: 'Pickup order (Deliverer Only)' })
   @HttpCode(HttpStatus.OK)
   async handle(
     @Param('orderId') orderId: string,
