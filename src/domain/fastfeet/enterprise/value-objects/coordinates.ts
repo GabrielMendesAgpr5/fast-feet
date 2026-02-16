@@ -62,4 +62,8 @@ export class Coordinates extends ValueObject<CoordinatesProps> {
   toString(): string {
     return `${this.latitude}, ${this.longitude}`
   }
+
+  isWithinRadius(other: Coordinates, radiusInKm: number): boolean {
+    return this.distanceTo(other) <= radiusInKm
+  }
 }

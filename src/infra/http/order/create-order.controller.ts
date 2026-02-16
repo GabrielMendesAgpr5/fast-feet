@@ -49,7 +49,6 @@ export class CreateOrderController {
 
     const { order } = result.value
     return {
-      id: order.id,
       product: order.product,
       recipientId: order.recipientId,
     }

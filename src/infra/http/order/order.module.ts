@@ -18,6 +18,8 @@ import { MarkOrderAsPendingController } from './mark-order-as-pending.controller
 import { MarkOrderAsPendingUseCase } from '@/domain/fastfeet/application/use-cases/orders/mark-order-as-pending-usecase'
 import { GetOrdersByStatusController } from './get-orders-by-status.controller'
 import { GetOrdersByStatusUseCase } from '@/domain/fastfeet/application/use-cases/orders/get-orders-by-status-usecase'
+import { GetNearbyOrdersController } from './get-nearby-orders.controller'
+import { GetNearbyOrdersUseCase } from '@/domain/fastfeet/application/use-cases/orders/get-nearby-orders-usecase'
 
 @Module({
   imports: [DataBaseModule, EnvModule],
@@ -31,6 +33,7 @@ import { GetOrdersByStatusUseCase } from '@/domain/fastfeet/application/use-case
     MarkOrderAsReturnedController,
     PickupOrderController,
     DeleteOrderController,
+    GetNearbyOrdersController,
   ],
   providers: [
     CreateOrderUseCase,
@@ -41,6 +44,7 @@ import { GetOrdersByStatusUseCase } from '@/domain/fastfeet/application/use-case
     MarkOrderAsDeliveredUseCase,
     MarkOrderAsReturnedUseCase,
     DeleteOrderUseCase,
+    GetNearbyOrdersUseCase,
   ],
 })
 export class OrderModule {}
