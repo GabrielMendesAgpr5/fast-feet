@@ -1,4 +1,3 @@
-// src/infra/database/prisma/repositories/prisma-notifications-repository.ts
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import { INotificationsRepository } from '@/domain/fastfeet/application/repositories/notifications-repository'

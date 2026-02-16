@@ -1,4 +1,3 @@
-// src/infra/http/multer/multer.config.ts
 import { diskStorage } from 'multer'
 import { Request } from 'express'
 import { extname } from 'path'

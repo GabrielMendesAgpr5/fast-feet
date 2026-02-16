@@ -1,4 +1,3 @@
-// src/domain/fastfeet/enterprise/entities/attachment.ts
 import { Entity } from '@/core/entities/entity'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 

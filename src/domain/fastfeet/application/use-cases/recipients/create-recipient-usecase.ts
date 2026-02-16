@@ -1,4 +1,3 @@
-// src/domain/fastfeet/application/use-cases/recipients/create-recipient-usecase.ts
 import { Either, left, right } from '@/core/either'
 import { Injectable } from '@nestjs/common'
 import { Recipient } from '@/domain/fastfeet/enterprise/entities/recipient'

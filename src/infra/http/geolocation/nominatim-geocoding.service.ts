@@ -1,4 +1,3 @@
-// src/infra/geolocation/nominatim-geocoding.service.ts
 import { Injectable } from '@nestjs/common'
 import axios, { AxiosError } from 'axios'
 import {
