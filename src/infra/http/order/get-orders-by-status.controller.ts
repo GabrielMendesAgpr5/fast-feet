@@ -18,7 +18,7 @@ import { GetOrdersByStatusUseCase } from '@/domain/fastfeet/application/use-case
 
 @ApiBearerAuth('bearer')
 @ApiTags('order')
-@Controller('/order')
+@Controller('/orders')
 export class GetOrdersByStatusController {
   constructor(
     private readonly getOrdersByStatusUseCase: GetOrdersByStatusUseCase,

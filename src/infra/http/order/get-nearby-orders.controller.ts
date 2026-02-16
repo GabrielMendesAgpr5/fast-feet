@@ -30,7 +30,7 @@ export class GetNearbyOrdersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.DELIVERYMAN)
   @ApiOperation({
-    summary: 'Get nearby pending orders based on deliveryman location',
+    summary: 'Get nearby pending orders (Deliveryman Only)',
   })
   @HttpCode(HttpStatus.OK)
   async handle(
