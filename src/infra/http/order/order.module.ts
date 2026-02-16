@@ -16,12 +16,15 @@ import { DeleteOrderController } from './delete-order.controller'
 import { DeleteOrderUseCase } from '@/domain/fastfeet/application/use-cases/orders/delete-order-usecase'
 import { MarkOrderAsPendingController } from './mark-order-as-pending.controller'
 import { MarkOrderAsPendingUseCase } from '@/domain/fastfeet/application/use-cases/orders/mark-order-as-pending-usecase'
+import { GetOrdersByStatusController } from './get-orders-by-status.controller'
+import { GetOrdersByStatusUseCase } from '@/domain/fastfeet/application/use-cases/orders/get-orders-by-status-usecase'
 
 @Module({
   imports: [DataBaseModule, EnvModule],
   controllers: [
     CreateOrderController,
     GetOrdersByDeliverymanController,
+    GetOrdersByStatusController,
     AssignDeliverymanToOrderController,
     MarkOrderAsPendingController,
     MarkOrderAsDeliveredController,
@@ -33,6 +36,7 @@ import { MarkOrderAsPendingUseCase } from '@/domain/fastfeet/application/use-cas
     CreateOrderUseCase,
     AssignDeliverymanToOrderUseCase,
     GetOrdersByDeliverymanUseCase,
+    GetOrdersByStatusUseCase,
     MarkOrderAsPendingUseCase,
     MarkOrderAsDeliveredUseCase,
     MarkOrderAsReturnedUseCase,

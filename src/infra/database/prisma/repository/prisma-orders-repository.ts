@@ -6,7 +6,7 @@ import {
   OrderStatusEnum,
 } from '@/domain/fastfeet/enterprise/entities/order'
 import { PrismaOrdersMapper } from '../mappers/prisma-orders-mapper'
-import { OrderStatus } from 'generated/prisma'
+import { OrderStatus } from '@prisma/client'
 
 @Injectable()
 export class PrismaOrdersRepository implements IOrdersRepository {
@@ -38,6 +38,16 @@ export class PrismaOrdersRepository implements IOrdersRepository {
         deliverymanId: deliverymanId,
         ...(status && { status: status as OrderStatus }),
       },
+    })
+
+    return prismaOrders.map((prismaOrder) =>
+      PrismaOrdersMapper.toDomain(prismaOrder),
+    )
+  }
+
+  async findByStatus(status?: OrderStatusEnum): Promise<Order[]> {
+    const prismaOrders = await this.prisma.order.findMany({
+      where: { ...(status && { status: status as OrderStatus }) },
     })
 
     return prismaOrders.map((prismaOrder) =>

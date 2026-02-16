@@ -13,4 +13,5 @@ export abstract class IOrdersRepository {
     deliverymanId: string,
     status?: OrderStatusEnum,
   ): Promise<Order[]>
+  abstract findByStatus(status?: OrderStatusEnum): Promise<Order[]>
 }
