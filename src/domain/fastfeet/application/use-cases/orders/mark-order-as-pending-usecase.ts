@@ -7,6 +7,7 @@ import {
   OrderStatusEnum,
 } from '@/domain/fastfeet/enterprise/entities/order'
 import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
+import { NotificationService } from '../../notification/notification.service'
 
 export interface IMarkOrderAsPendingDTO {
   orderId: string
@@ -21,7 +22,10 @@ type MarkOrderAsPendingResponseUseCase = Either<
 
 @Injectable()
 export class MarkOrderAsPendingUseCase {
-  constructor(private orderRepository: IOrdersRepository) {}
+  constructor(
+    private orderRepository: IOrdersRepository,
+    private notificationService: NotificationService,
+  ) {}
 
   async execute(
     data: IMarkOrderAsPendingDTO,
@@ -34,9 +38,15 @@ export class MarkOrderAsPendingUseCase {
         new NotAllowedError('Only waiting requests can remain pending'),
       )
     }
+    const previousStatus = order.status
 
     order.status = OrderStatusEnum.PENDING
-    order.deliveredAt = new Date()
+
+    await this.notificationService.sendOrderStatusNotification(
+      order,
+      previousStatus,
+      OrderStatusEnum.PENDING,
+    )
 
     await this.orderRepository.update(order)
     return right({ order })

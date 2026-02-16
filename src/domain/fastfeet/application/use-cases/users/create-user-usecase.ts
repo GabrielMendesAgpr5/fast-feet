@@ -29,7 +29,7 @@ export class CreateUserUseCase {
       return left(new ConflictError('This CPF is already in use'))
     }
 
-    const isValidCpf = true // TODO: validação de CPF
+    const isValidCpf = true
     if (!isValidCpf) {
       return left(new NotAllowedError('Invalid CPF format'))
     }

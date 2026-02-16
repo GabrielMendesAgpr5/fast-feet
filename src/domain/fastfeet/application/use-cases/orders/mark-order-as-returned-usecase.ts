@@ -7,6 +7,7 @@ import {
   OrderStatusEnum,
 } from '@/domain/fastfeet/enterprise/entities/order'
 import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
+import { NotificationService } from '../../notification/notification.service'
 
 export interface IMarkOrderAsReturnedDTO {
   orderId: string
@@ -22,7 +23,10 @@ type MarkOrderAsReturnedResponseUseCase = Either<
 
 @Injectable()
 export class MarkOrderAsReturnedUseCase {
-  constructor(private orderRepository: IOrdersRepository) {}
+  constructor(
+    private orderRepository: IOrdersRepository,
+    private notificationService: NotificationService,
+  ) {}
 
   async execute(
     data: IMarkOrderAsReturnedDTO,
@@ -33,10 +37,16 @@ export class MarkOrderAsReturnedUseCase {
     if (order.status !== OrderStatusEnum.DELIVERED) {
       return left(new NotAllowedError('Only delivered orders can be returned'))
     }
+    const previousStatus = order.status
 
     order.status = OrderStatusEnum.RETURNED
     order.returnedAt = new Date()
-    //envia notificação
+
+    await this.notificationService.sendOrderStatusNotification(
+      order,
+      previousStatus,
+      OrderStatusEnum.RETURNED,
+    )
 
     await this.orderRepository.update(order)
     return right({ order })

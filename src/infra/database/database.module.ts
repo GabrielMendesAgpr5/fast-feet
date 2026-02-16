@@ -10,6 +10,10 @@ import { IRecipientsRepository } from '@/domain/fastfeet/application/repositorie
 import { CreateRecipientUseCase } from '@/domain/fastfeet/application/use-cases/recipients/create-recipient-usecase'
 import { PrismaRecipientRepository } from './prisma/repository/prisma-recipient-repository'
 import { GeolocationModule } from '../http/geolocation/geolocation.module'
+import { IAttachmentsRepository } from '@/domain/fastfeet/application/repositories/attachments-repository'
+import { PrismaAttachmentsRepository } from './prisma/repository/prisma-attachments-repository'
+import { INotificationsRepository } from '@/domain/fastfeet/application/repositories/notifications-repository'
+import { PrismaNotificationsRepository } from './prisma/repository/prisma-notifications-repository'
 
 @Module({
   imports: [GeolocationModule],
@@ -20,17 +24,31 @@ import { GeolocationModule } from '../http/geolocation/geolocation.module'
       useClass: PrismaUsersRepository,
     },
     {
+      provide: IRecipientsRepository,
+      useClass: PrismaRecipientRepository,
+    },
+    {
       provide: IOrdersRepository,
       useClass: PrismaOrdersRepository,
     },
     {
-      provide: IRecipientsRepository,
-      useClass: PrismaRecipientRepository,
+      provide: INotificationsRepository,
+      useClass: PrismaNotificationsRepository,
+    },
+    {
+      provide: IAttachmentsRepository,
+      useClass: PrismaAttachmentsRepository,
     },
     CreateUserUseCase,
-    CreateOrderUseCase,
     CreateRecipientUseCase,
+    CreateOrderUseCase,
   ],
-  exports: [IUsersRepository, IOrdersRepository, IRecipientsRepository],
+  exports: [
+    IUsersRepository,
+    IRecipientsRepository,
+    IOrdersRepository,
+    IAttachmentsRepository,
+    INotificationsRepository,
+  ],
 })
 export class DataBaseModule {}

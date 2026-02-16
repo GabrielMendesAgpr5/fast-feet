@@ -7,6 +7,7 @@ import {
   OrderStatusEnum,
 } from '@/domain/fastfeet/enterprise/entities/order'
 import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
+import { NotificationService } from '../../notification/notification.service'
 
 export interface IAssignDeliverymanToOrderDTO {
   orderId: string
@@ -22,7 +23,10 @@ type AssignDeliverymanToOrderResponseUseCase = Either<
 
 @Injectable()
 export class AssignDeliverymanToOrderUseCase {
-  constructor(private orderRepository: IOrdersRepository) {}
+  constructor(
+    private orderRepository: IOrdersRepository,
+    private notificationService: NotificationService,
+  ) {}
 
   async execute(
     data: IAssignDeliverymanToOrderDTO,
@@ -33,12 +37,19 @@ export class AssignDeliverymanToOrderUseCase {
     if (order.status !== OrderStatusEnum.PENDING) {
       return left(new NotAllowedError('Only pending orders can be assigned'))
     }
+    const previousStatus = order.status
 
     order.deliverymanId = data.deliverymanId
     order.status = OrderStatusEnum.WITHDRAWN
     order.withdrawnAt = new Date()
 
     await this.orderRepository.update(order)
+
+    await this.notificationService.sendOrderStatusNotification(
+      order,
+      previousStatus,
+      OrderStatusEnum.WITHDRAWN,
+    )
     return right({ order })
   }
 }

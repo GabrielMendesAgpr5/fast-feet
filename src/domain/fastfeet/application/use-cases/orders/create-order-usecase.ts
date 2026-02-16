@@ -1,11 +1,12 @@
-import { Either, right } from '@/core/either'
+import { Either, right, left } from '@/core/either'
 import { IOrdersRepository } from '../../repositories/orders-repository'
 import { Injectable } from '@nestjs/common'
-import { ConflictError } from '@/core/errors/use-case-errors/conflict-error'
 import {
   Order,
   OrderStatusEnum,
 } from '@/domain/fastfeet/enterprise/entities/order'
+import { IRecipientsRepository } from '../../repositories/recipients-repository'
+import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
 
 export interface ICreateOrderDTO {
   product: string
@@ -13,7 +14,7 @@ export interface ICreateOrderDTO {
 }
 
 type CreateOrderResponseUseCase = Either<
-  ConflictError,
+  NotFoundError,
   {
     order: Order
   }
@@ -21,9 +22,19 @@ type CreateOrderResponseUseCase = Either<
 
 @Injectable()
 export class CreateOrderUseCase {
-  constructor(private ordersRepository: IOrdersRepository) {}
+  constructor(
+    private ordersRepository: IOrdersRepository,
+    private recipientsRepository: IRecipientsRepository,
+  ) {}
 
   async execute(data: ICreateOrderDTO): Promise<CreateOrderResponseUseCase> {
+    const recipientExists = await this.recipientsRepository.findById(
+      data.recipientId,
+    )
+    if (!recipientExists) {
+      return left(new NotFoundError('Recipient not found'))
+    }
+
     const order = Order.create({
       ...data,
       status: OrderStatusEnum.WAITING,

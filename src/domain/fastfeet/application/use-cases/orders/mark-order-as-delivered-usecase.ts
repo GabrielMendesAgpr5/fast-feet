@@ -1,5 +1,6 @@
 import { Either, left, right } from '@/core/either'
 import { IOrdersRepository } from '../../repositories/orders-repository'
+import { IAttachmentsRepository } from '../../repositories/attachments-repository'
 import { Injectable } from '@nestjs/common'
 import { NotAllowedError } from '@/core/errors/use-case-errors/not-allowed-error'
 import {
@@ -7,10 +8,14 @@ import {
   OrderStatusEnum,
 } from '@/domain/fastfeet/enterprise/entities/order'
 import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
+import { Attachment } from '@/domain/fastfeet/enterprise/entities/attachment'
+import { NotificationService } from '../../notification/notification.service'
 
 export interface IMarkOrderAsDeliveredDTO {
   orderId: string
   deliverymanId: string
+  photoFilename: string
+  photoPath: string
 }
 
 type MarkOrderAsDeliveredResponseUseCase = Either<
@@ -22,7 +27,11 @@ type MarkOrderAsDeliveredResponseUseCase = Either<
 
 @Injectable()
 export class MarkOrderAsDeliveredUseCase {
-  constructor(private orderRepository: IOrdersRepository) {}
+  constructor(
+    private orderRepository: IOrdersRepository,
+    private attachmentsRepository: IAttachmentsRepository,
+    private notificationService: NotificationService,
+  ) {}
 
   async execute(
     data: IMarkOrderAsDeliveredDTO,
@@ -42,11 +51,28 @@ export class MarkOrderAsDeliveredUseCase {
       )
     }
 
-    //Verifica se foi enviado uma foto
+    if (!data.photoFilename || !data.photoPath) {
+      return left(new NotAllowedError('Photo is required to complete delivery'))
+    }
 
+    const attachment = Attachment.create({
+      title: `Delivery proof - Order ${data.orderId}`,
+      url: data.photoPath,
+    })
+
+    await this.attachmentsRepository.create(attachment)
+
+    const previousStatus = order.status
+
+    order.signatureId = attachment.id.toString()
     order.status = OrderStatusEnum.DELIVERED
     order.deliveredAt = new Date()
-    //envia notificação
+
+    await this.notificationService.sendOrderStatusNotification(
+      order,
+      previousStatus,
+      OrderStatusEnum.DELIVERED,
+    )
 
     await this.orderRepository.update(order)
     return right({ order })

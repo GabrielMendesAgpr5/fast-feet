@@ -1,22 +1,22 @@
+import { Entity } from '@/core/entities/entity'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+
 export interface NotificationProps {
   id: string
+  title: string
   content: string
   recipientId: string
+  readAt: Date | null
   createdAt: Date
-  updatedAt: Date | null
 }
 
-export class Notification {
-  private readonly _id: string
-  private props: NotificationProps
-
-  constructor(props: NotificationProps, id?: string) {
-    this.props = props
-    this._id = id ?? props.id
+export class Notification extends Entity<NotificationProps> {
+  public get title() {
+    return this.props.title
   }
 
-  public get id() {
-    return this._id
+  public set title(value: string) {
+    this.props.title = value
   }
 
   public get content() {
@@ -25,7 +25,6 @@ export class Notification {
 
   public set content(value: string) {
     this.props.content = value
-    this.touch()
   }
 
   public get recipientId() {
@@ -34,31 +33,30 @@ export class Notification {
 
   public set recipientId(value: string) {
     this.props.recipientId = value
-    this.touch()
+  }
+
+  public get readAt() {
+    return this.props.readAt
   }
 
   public get createdAt() {
     return this.props.createdAt
   }
 
-  public get updatedAt() {
-    return this.props.updatedAt
-  }
-
-  private touch() {
-    this.props.updatedAt = new Date()
+  public markAsRead() {
+    this.props.readAt = new Date()
   }
 
   public static create(
-    props: Omit<NotificationProps, 'createdAt' | 'updatedAt'>,
-    id?: string,
+    props: Omit<NotificationProps, 'createdAt' | 'updatedAt' | 'readAt'>,
+    id?: UniqueEntityId,
   ) {
     const now = new Date()
     return new Notification(
       {
         ...props,
+        readAt: null,
         createdAt: now,
-        updatedAt: now,
       },
       id,
     )

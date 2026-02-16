@@ -20,6 +20,7 @@ import { GetOrdersByStatusController } from './get-orders-by-status.controller'
 import { GetOrdersByStatusUseCase } from '@/domain/fastfeet/application/use-cases/orders/get-orders-by-status-usecase'
 import { GetNearbyOrdersController } from './get-nearby-orders.controller'
 import { GetNearbyOrdersUseCase } from '@/domain/fastfeet/application/use-cases/orders/get-nearby-orders-usecase'
+import { NotificationService } from '@/domain/fastfeet/application/notification/notification.service'
 
 @Module({
   imports: [DataBaseModule, EnvModule],
@@ -27,24 +28,25 @@ import { GetNearbyOrdersUseCase } from '@/domain/fastfeet/application/use-cases/
     CreateOrderController,
     GetOrdersByDeliverymanController,
     GetOrdersByStatusController,
+    GetNearbyOrdersController,
     AssignDeliverymanToOrderController,
     MarkOrderAsPendingController,
     MarkOrderAsDeliveredController,
     MarkOrderAsReturnedController,
     PickupOrderController,
     DeleteOrderController,
-    GetNearbyOrdersController,
   ],
   providers: [
     CreateOrderUseCase,
-    AssignDeliverymanToOrderUseCase,
     GetOrdersByDeliverymanUseCase,
     GetOrdersByStatusUseCase,
+    GetNearbyOrdersUseCase,
+    AssignDeliverymanToOrderUseCase,
     MarkOrderAsPendingUseCase,
     MarkOrderAsDeliveredUseCase,
     MarkOrderAsReturnedUseCase,
     DeleteOrderUseCase,
-    GetNearbyOrdersUseCase,
+    NotificationService,
   ],
 })
 export class OrderModule {}
