@@ -8,6 +8,8 @@ import { DeleteRecipientUseCase } from '@/domain/fastfeet/application/use-cases/
 import { GeolocationModule } from '../../geolocation/geolocation.module'
 import { UpdateRecipientController } from './update-recipient.controller'
 import { UpdateRecipientUseCase } from '@/domain/fastfeet/application/use-cases/recipients/update-recipient-usecase'
+import { GetRecipientsController } from './get-recipients.controller'
+import { GetRecipientsUseCase } from '@/domain/fastfeet/application/use-cases/recipients/get-recipient'
 
 @Module({
   imports: [DataBaseModule, EnvModule, GeolocationModule],
@@ -15,11 +17,13 @@ import { UpdateRecipientUseCase } from '@/domain/fastfeet/application/use-cases/
     CreateRecipientController,
     UpdateRecipientController,
     DeleteRecipientController,
+    GetRecipientsController,
   ],
   providers: [
     CreateRecipientUseCase,
     UpdateRecipientUseCase,
     DeleteRecipientUseCase,
+    GetRecipientsUseCase,
   ],
 })
 export class RecipientModule {}

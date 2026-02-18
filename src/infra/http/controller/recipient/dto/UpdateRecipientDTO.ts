@@ -7,10 +7,6 @@ export const updateRecipientSchema = z
     name: z.string().min(3).max(100),
     email: z.email().optional().nullable(),
     street: z.string().min(3),
-    number: z
-      .string()
-      .regex(/^\d{1,6}$/, 'House number must be at most 6 digits'),
-    complement: z.string().optional().nullable(),
     city: z.string().min(2),
     state: z.string().length(2, 'State must be 2 characters'),
     zipCode: z.string().regex(/^\d{5}-?\d{3}$/, 'Invalid ZIP code format'),
@@ -19,7 +15,7 @@ export const updateRecipientSchema = z
   })
   .partial()
   .refine((data) => Object.keys(data).length > 0, {
-    message: 'Envie ao menos um campo para atualizar',
+    message: 'Submit at least one field to update.',
   })
 
 export const validateUpdateRecipientDTO = new ZodValidationPipe(
@@ -32,17 +28,17 @@ export class UpdateRecipientDTO implements UpdateRecipientDTOType {
   @ApiPropertyOptional()
   name?: string
   @ApiPropertyOptional()
-  city?: string
-  @ApiPropertyOptional()
-  complement?: string
-  @ApiPropertyOptional()
   email?: string
   @ApiPropertyOptional()
-  number?: string
+  city?: string
   @ApiPropertyOptional()
   state?: string
   @ApiPropertyOptional()
   street?: string
   @ApiPropertyOptional()
   zipCode?: string
+  @ApiPropertyOptional()
+  latitude?: number
+  @ApiPropertyOptional()
+  longitude?: number
 }

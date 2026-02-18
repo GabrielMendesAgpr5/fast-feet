@@ -26,7 +26,7 @@ export class PrismaRecipientsMapper {
     )
   }
 
-  static toPrisma(recipient: Recipient) {
+  static toPrisma(recipient: Recipient): Prisma.RecipientCreateInput {
     return {
       id: recipient.id.toString(),
       name: recipient.name,
@@ -44,7 +44,7 @@ export class PrismaRecipientsMapper {
     }
   }
 
-  static toPrismaUpdate(recipient: Recipient) {
+  static toPrismaUpdate(recipient: Recipient): Prisma.RecipientUpdateInput {
     return {
       name: recipient.name,
       email: recipient.email,

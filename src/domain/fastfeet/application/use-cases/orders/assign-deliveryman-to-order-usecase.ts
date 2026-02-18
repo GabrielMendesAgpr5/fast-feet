@@ -8,6 +8,7 @@ import {
 } from '@/domain/fastfeet/enterprise/entities/order'
 import { NotFoundError } from '@/core/errors/use-case-errors/not-found-error'
 import { NotificationService } from '../../notification/notification.service'
+import { IUsersRepository } from '../../repositories/users-repository'
 
 export interface IAssignDeliverymanToOrderDTO {
   orderId: string
@@ -26,6 +27,7 @@ export class AssignDeliverymanToOrderUseCase {
   constructor(
     private orderRepository: IOrdersRepository,
     private notificationService: NotificationService,
+    private userRepository: IUsersRepository,
   ) {}
 
   async execute(
@@ -38,6 +40,15 @@ export class AssignDeliverymanToOrderUseCase {
       return left(new NotAllowedError('Only pending orders can be assigned'))
     }
     const previousStatus = order.status
+
+    const user = await this.userRepository.findById(data.deliverymanId)
+    if (!user) return left(new NotFoundError('Deliveryman not found'))
+
+    if (!user.isDeliveryman()) {
+      return left(
+        new NotAllowedError('Only deliverymen can be assigned to orders'),
+      )
+    }
 
     order.deliverymanId = data.deliverymanId
     order.status = OrderStatusEnum.WITHDRAWN

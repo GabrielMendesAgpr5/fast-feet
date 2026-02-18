@@ -1,5 +1,8 @@
-import { Order } from '@/domain/fastfeet/enterprise/entities/order'
-import { ApiProperty } from '@nestjs/swagger'
+import {
+  Order,
+  OrderStatusEnum,
+} from '@/domain/fastfeet/enterprise/entities/order'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class OrderPresenterResponse {
   @ApiProperty()
@@ -8,6 +11,10 @@ export class OrderPresenterResponse {
   product!: string
   @ApiProperty()
   recipientId!: string
+  @ApiPropertyOptional()
+  deliverymanId?: string | null
+  @ApiPropertyOptional()
+  status?: OrderStatusEnum
 }
 
 export class OrderPresenter {
@@ -16,6 +23,8 @@ export class OrderPresenter {
       id: Order.id.toString(),
       product: Order.product,
       recipientId: Order.recipientId,
+      deliverymanId: Order.deliverymanId,
+      status: Order.status,
     }
   }
 }

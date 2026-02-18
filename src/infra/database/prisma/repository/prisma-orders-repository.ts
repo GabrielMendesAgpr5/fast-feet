@@ -6,7 +6,7 @@ import {
   OrderStatusEnum,
 } from '@/domain/fastfeet/enterprise/entities/order'
 import { PrismaOrdersMapper } from '../mappers/prisma-orders-mapper'
-import { OrderStatus, Prisma } from '@prisma/client'
+import { OrderStatus } from '@prisma/client'
 import { Recipient } from '@/domain/fastfeet/enterprise/entities/recipient'
 import { PrismaRecipientsMapper } from '../mappers/prisma-recipients-mapper'
 
@@ -31,31 +31,6 @@ export class PrismaOrdersRepository implements IOrdersRepository {
   }
   constructor(private prisma: PrismaService) {}
 
-  async findNearbyOrders(
-    latitude: number,
-    longitude: number,
-    radiusInKm: number = 10,
-    status?: OrderStatusEnum,
-  ): Promise<Order[]> {
-    const radiusInMeters = radiusInKm * 1000
-
-    return this.prisma.$queryRaw`
-    SELECT *, 
-      ST_Distance(
-        ST_MakePoint(longitude, latitude)::geography,
-        ST_MakePoint(${longitude}, ${latitude})::geography
-      ) as distance
-    FROM orders
-    WHERE ST_DWithin(
-      ST_MakePoint(longitude, latitude)::geography,
-      ST_MakePoint(${longitude}, ${latitude})::geography,
-      ${radiusInMeters}
-    )
-    ${status ? Prisma.sql`AND status = ${status}` : Prisma.empty}
-    ORDER BY distance
-  `
-  }
-
   async findByRecipient(recipientId: string): Promise<Order | null> {
     const prismaOrder = await this.prisma.order.findFirst({
       where: {
@@ -70,7 +45,7 @@ export class PrismaOrdersRepository implements IOrdersRepository {
     return PrismaOrdersMapper.toDomain(prismaOrder)
   }
   async delete(orderId: string): Promise<void> {
-    await this.prisma.user.delete({
+    await this.prisma.order.delete({
       where: { id: orderId },
     })
   }

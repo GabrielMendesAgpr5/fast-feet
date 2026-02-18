@@ -20,13 +20,6 @@ export abstract class IOrdersRepository {
     status?: OrderStatusEnum,
   ): Promise<Order[]>
   abstract findByStatus(status?: OrderStatusEnum): Promise<Order[]>
-  abstract findNearbyOrders(
-    latitude: number,
-    longitude: number,
-    radiusInKm?: number,
-    status?: OrderStatusEnum,
-  ): Promise<Order[]>
-
   abstract findPendingWithRecipients(): Promise<
     Array<{ order: Order; recipient: Recipient }>
   >

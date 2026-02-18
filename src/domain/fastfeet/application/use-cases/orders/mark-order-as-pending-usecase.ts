@@ -41,6 +41,7 @@ export class MarkOrderAsPendingUseCase {
     const previousStatus = order.status
 
     order.status = OrderStatusEnum.PENDING
+    order.availableAt = new Date()
 
     await this.notificationService.sendOrderStatusNotification(
       order,

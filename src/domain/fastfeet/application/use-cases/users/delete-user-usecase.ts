@@ -28,7 +28,7 @@ export class DeleteUserUseCase {
     const hasActiveOrders = await this.ordersRepository.findByDeliverymanId(
       user.id.toString(),
     )
-    if (hasActiveOrders) {
+    if (hasActiveOrders.length > 0) {
       return left(new NotAllowedError('Cannot delete user with order'))
     }
 

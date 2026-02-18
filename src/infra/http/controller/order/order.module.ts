@@ -21,6 +21,8 @@ import { GetOrdersByStatusUseCase } from '@/domain/fastfeet/application/use-case
 import { GetNearbyOrdersController } from './get-nearby-orders.controller'
 import { GetNearbyOrdersUseCase } from '@/domain/fastfeet/application/use-cases/orders/get-nearby-orders-usecase'
 import { NotificationService } from '@/domain/fastfeet/application/notification/notification.service'
+import { UpdateOrderController } from './update-order.controller'
+import { UpdateOrderUseCase } from '@/domain/fastfeet/application/use-cases/orders/update-order-usecase'
 
 @Module({
   imports: [DataBaseModule, EnvModule],
@@ -34,6 +36,7 @@ import { NotificationService } from '@/domain/fastfeet/application/notification/
     MarkOrderAsDeliveredController,
     MarkOrderAsReturnedController,
     PickupOrderController,
+    UpdateOrderController,
     DeleteOrderController,
   ],
   providers: [
@@ -46,6 +49,7 @@ import { NotificationService } from '@/domain/fastfeet/application/notification/
     MarkOrderAsDeliveredUseCase,
     MarkOrderAsReturnedUseCase,
     DeleteOrderUseCase,
+    UpdateOrderUseCase,
     NotificationService,
   ],
 })

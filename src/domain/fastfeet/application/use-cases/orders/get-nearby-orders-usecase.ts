@@ -43,6 +43,9 @@ export class GetNearbyOrdersUseCase {
       .map(({ order, recipient }) => ({
         orderId: order.id.toString(),
         product: order.product,
+        state: recipient.state,
+        city: recipient.city,
+        street: recipient.street,
         distanceKm: calculateDistance(
           data.latitude,
           data.longitude,

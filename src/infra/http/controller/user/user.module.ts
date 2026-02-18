@@ -5,16 +5,24 @@ import { DataBaseModule } from '@/infra/database/database.module'
 import { EnvModule } from '@/infra/env/env.module'
 import { UpdateUserController } from './update-user.controller'
 import { UpdateUserUseCase } from '@/domain/fastfeet/application/use-cases/users/update-user-usecase'
-import { DeleteOrderController } from '../order/delete-order.controller'
-import { DeleteOrderUseCase } from '@/domain/fastfeet/application/use-cases/orders/delete-order-usecase'
+import { DeleteUserUseCase } from '@/domain/fastfeet/application/use-cases/users/delete-user-usecase'
+import { DeleteUserController } from './delete-user.controller'
+import { GetUsersByRoleController } from './get-users-by-role.controller'
+import { GetUsersByRoleUseCase } from '@/domain/fastfeet/application/use-cases/users/get-user-by-role-usecase'
 
 @Module({
   imports: [DataBaseModule, EnvModule],
   controllers: [
     CreateUserController,
     UpdateUserController,
-    DeleteOrderController,
+    DeleteUserController,
+    GetUsersByRoleController,
   ],
-  providers: [CreateUserUseCase, UpdateUserUseCase, DeleteOrderUseCase],
+  providers: [
+    CreateUserUseCase,
+    UpdateUserUseCase,
+    DeleteUserUseCase,
+    GetUsersByRoleUseCase,
+  ],
 })
 export class UserModule {}

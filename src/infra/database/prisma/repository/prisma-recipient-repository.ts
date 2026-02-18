@@ -1,12 +1,36 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
-import { IRecipientsRepository } from '@/domain/fastfeet/application/repositories/recipients-repository'
+import {
+  IRecipientsFiltersDTO,
+  IRecipientsRepository,
+} from '@/domain/fastfeet/application/repositories/recipients-repository'
 import { Recipient } from '@/domain/fastfeet/enterprise/entities/recipient'
 import { PrismaRecipientsMapper } from '../mappers/prisma-recipients-mapper'
+import { Prisma } from '@prisma/client'
 
 @Injectable()
 export class PrismaRecipientRepository implements IRecipientsRepository {
   constructor(private prisma: PrismaService) {}
+  async findMany(filters: IRecipientsFiltersDTO): Promise<Recipient[]> {
+    const where: Prisma.RecipientWhereInput = {}
+
+    if (filters.name) {
+      where.name = { contains: filters.name, mode: 'insensitive' }
+    }
+    if (filters.email) {
+      where.email = { contains: filters.email, mode: 'insensitive' }
+    }
+    if (filters.city) {
+      where.city = { contains: filters.city, mode: 'insensitive' }
+    }
+    if (filters.state) {
+      where.state = { equals: filters.state }
+    }
+
+    const results = await this.prisma.recipient.findMany({ where })
+    return results.map((item) => PrismaRecipientsMapper.toDomain(item))
+  }
+
   async findByEmail(email: string): Promise<Recipient | null> {
     const prismaRecipient = await this.prisma.recipient.findFirst({
       where: { email: email },
@@ -28,7 +52,7 @@ export class PrismaRecipientRepository implements IRecipientsRepository {
   }
 
   async delete(recipientId: string): Promise<void> {
-    await this.prisma.user.delete({
+    await this.prisma.recipient.delete({
       where: { id: recipientId },
     })
   }

@@ -2,11 +2,23 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import { IUsersRepository } from '@/domain/fastfeet/application/repositories/users-repository'
 import { PrismaUsersMapper } from '../mappers/prisma-users-mapper'
-import { User } from '@/domain/fastfeet/enterprise/entities/user'
+import { User, UserRoleEnum } from '@/domain/fastfeet/enterprise/entities/user'
+import { UserRole } from '@prisma/client'
 
 @Injectable()
 export class PrismaUsersRepository implements IUsersRepository {
   constructor(private prisma: PrismaService) {}
+  async findAll(role?: UserRoleEnum): Promise<User[]> {
+    const prismaUsers = await this.prisma.user.findMany({
+      where: {
+        ...(role && { role: role as UserRole }),
+      },
+    })
+
+    return prismaUsers.map((prismaUsers) =>
+      PrismaUsersMapper.toDomain(prismaUsers),
+    )
+  }
   async delete(userId: string): Promise<void> {
     await this.prisma.user.delete({
       where: { id: userId },
