@@ -46,6 +46,9 @@ export class GetNearbyOrdersUseCase {
         state: recipient.state,
         city: recipient.city,
         street: recipient.street,
+        number: recipient.number,
+        zipCode: recipient.zipCode,
+        complement: recipient.complement,
         distanceKm: calculateDistance(
           data.latitude,
           data.longitude,
